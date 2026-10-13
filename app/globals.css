@@ -1,26 +1,84 @@
 @import "tailwindcss";
 
+@theme {
+  --color-ink: #0b1220;
+  --color-ink-soft: #1e293b;
+  --color-slate-body: #475569;
+
+  --color-brand-50: #eef4ff;
+  --color-brand-100: #d9e6ff;
+  --color-brand-500: #2f5fe0;
+  --color-brand-600: #1f4bd0;
+  --color-brand-700: #173aa6;
+  --color-brand-900: #0d1f5c;
+
+  --color-accent-400: #fbbf24;
+  --color-accent-500: #f59e0b;
+  --color-accent-600: #d97706;
+
+  --color-surface: #f7f9fc;
+  --color-border-soft: #e5eaf1;
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+}
+
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: var(--color-ink);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Reusable button styles for conversion-focused CTAs. */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 0.65rem;
+  font-weight: 600;
+  padding: 0.85rem 1.5rem;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+  cursor: pointer;
+  text-align: center;
+}
+
+.btn-primary {
+  background-color: var(--color-accent-500);
+  color: #1a1206;
+  box-shadow: 0 10px 24px -12px rgba(245, 158, 11, 0.7);
+}
+
+.btn-primary:hover {
+  background-color: var(--color-accent-600);
+  transform: translateY(-1px);
+}
+
+.btn-secondary {
+  background-color: var(--color-brand-600);
+  color: #ffffff;
+}
+
+.btn-secondary:hover {
+  background-color: var(--color-brand-700);
+  transform: translateY(-1px);
+}
+
+.btn-ghost {
+  background-color: transparent;
+  color: var(--color-brand-600);
+  border: 1.5px solid var(--color-brand-100);
+}
+
+.btn-ghost:hover {
+  background-color: var(--color-brand-50);
 }
