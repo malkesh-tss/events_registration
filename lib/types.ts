@@ -29,7 +29,15 @@ export interface RoundtableEvent extends BaseEvent {
 export interface WorkshopEvent extends BaseEvent {
   format: 'workshop'
   framework?: string
+  /** Short "Framework: focus" line used in the schedule table. */
+  focus?: string
   problem?: string
+  /** "What You Will Explore" bullets for the featured session. */
+  explore?: string[]
+  /** Closing takeaway sentence for the featured session. */
+  takeaway?: string
+  /** Whether registration is still open (upcoming) vs. a past session. */
+  upcoming?: boolean
   takeaways?: string[]
 }
 
@@ -47,4 +55,8 @@ export interface RegistrationPayload {
 export interface Registration extends RegistrationPayload {
   id: string
   createdAt: string
+  /** Zoom meeting the attendee was registered for. */
+  zoomMeetingId?: string
+  /** Direct join URL returned by Zoom (shown after a successful signup). */
+  joinUrl?: string | null
 }

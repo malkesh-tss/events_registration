@@ -1,10 +1,9 @@
 import Header from '@/components/viewer/Header'
 import Hero from '@/components/viewer/Hero'
-import ChoosePath from '@/components/viewer/ChoosePath'
+// import ChoosePath from '@/components/viewer/ChoosePath'
 import Roundtables from '@/components/viewer/Roundtables'
 import Workshops from '@/components/viewer/Workshops'
-import FacilitatorBio from '@/components/viewer/FacilitatorBio'
-import FAQ from '@/components/viewer/FAQ'
+// import FacilitatorBio from '@/components/viewer/FacilitatorBio'
 import FinalCTA from '@/components/viewer/FinalCTA'
 import Footer from '@/components/viewer/Footer'
 import RegistrationProvider from '@/components/viewer/RegistrationProvider'
@@ -20,7 +19,6 @@ export default function LandingPage() {
   const roundtables = getRoundtables()
   const featured = getFeaturedWorkshop()
   const allWorkshops = getWorkshops()
-  const archive = allWorkshops.filter((workshop) => !workshop.featured)
 
   // Soonest event by scheduled date drives the "next up" CTA. Kept date-only
   // (no wall-clock) so the landing page stays fully static/prerenderable.
@@ -36,15 +34,10 @@ export default function LandingPage() {
       <Header />
       <main>
         <Hero />
-        <ChoosePath />
+        {/* <ChoosePath /> */}
         <Roundtables events={roundtables} />
-        <Workshops
-          featured={featured}
-          archive={archive}
-          nextWorkshop={featured ?? allWorkshops[0]}
-        />
-        <FacilitatorBio />
-        <FAQ />
+        <Workshops workshops={allWorkshops} />
+        {/* <FacilitatorBio /> */}
         <FinalCTA nextEvent={nextEvent} />
       </main>
       <Footer />

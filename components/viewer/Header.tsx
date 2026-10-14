@@ -1,23 +1,24 @@
+import Image from 'next/image'
 import RegisterButton from '@/components/viewer/RegisterButton'
 
 const navLinks = [
-  { href: '#paths', label: 'Roundtables vs Workshops' },
   { href: '#roundtables', label: 'Roundtables' },
   { href: '#workshops', label: 'Workshops' },
-  { href: '#faq', label: 'FAQ' },
 ]
 
 export default function Header() {
   return (
     <header className="sticky top-0 z-40 border-b border-border-soft bg-white/85 backdrop-blur">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-3">
-        <a href="#top" className="flex items-baseline gap-2">
-          <span className="text-lg font-extrabold tracking-tight text-brand-900">
-            The Scale Summit
-          </span>
-          <span className="hidden text-xs font-medium text-slate-body sm:inline">
-            with Darrin Guttman
-          </span>
+        <a href="#top" className="flex items-center" aria-label="The Scale Summit — home">
+          <Image
+            src="/logo.png"
+            alt="The Scale Summit"
+            width={480}
+            height={200}
+            priority
+            className="h-9 w-auto sm:h-10"
+          />
         </a>
         <nav className="hidden items-center gap-6 md:flex">
           {navLinks.map((link) => (

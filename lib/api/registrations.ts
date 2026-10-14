@@ -1,11 +1,7 @@
 import type { Registration, RegistrationPayload } from '@/lib/types'
 import { getEventById } from '@/lib/api/events'
-
-// Lightweight in-memory registration store (acts as the backend "database").
-// Swap `store` for a real persistence layer (DB, Airtable, etc.) without
-// touching the route handler contract.
-
-const store: Registration[] = []
+import { insertRegistration } from '@/lib/api/db'
+import { ZoomClient } from '@/lib/api/zoom'
 
 export interface ValidationResult {
   ok: boolean
@@ -35,20 +31,63 @@ export function validateRegistration(payload: unknown): ValidationResult {
   return { ok: Object.keys(errors).length === 0, errors }
 }
 
-export function createRegistration(payload: RegistrationPayload): Registration {
-  const registration: Registration = {
-    ...payload,
-    id: `reg_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
-    createdAt: new Date().toISOString(),
+function splitName(fullName: string): { firstName: string; lastName: string } {
+  const parts = fullName.trim().split(/\s+/)
+  const firstName = parts.shift() ?? fullName.trim()
+  const lastName = parts.join(' ')
+  return { firstName, lastName: lastName || '-' }
+}
+
+/**
+ * Registers an attendee for an event:
+ *  1. Finds the matching scheduled Zoom meeting (title + start time).
+ *  2. Adds the attendee as a Zoom registrant (Zoom emails them the join link).
+ *  3. Persists the registration (with the join URL) to Neon.
+ *
+ * Throws ZoomError if Zoom is not configured or no meeting matches — the caller
+ * must treat that as a failed registration (Zoom is required).
+ */
+export async function createRegistration(
+  payload: RegistrationPayload,
+): Promise<Registration> {
+  const event = getEventById(payload.eventId)
+  if (!event) {
+    throw new Error('We could not find that event.')
   }
-  store.push(registration)
-  return registration
-}
 
-export function countRegistrationsFor(eventId: string): number {
-  return store.filter((registration) => registration.eventId === eventId).length
-}
+  const { firstName, lastName } = splitName(payload.fullName)
+  const zoom = new ZoomClient()
+  const meetingId = await zoom.findMeeting(event.title, new Date(event.startsAt))
+  const registrant = await zoom.registerAttendee(
+    meetingId,
+    firstName,
+    lastName,
+    payload.email,
+  )
+  const joinUrl = registrant.join_url ?? registrant.start_url ?? null
 
-export function listRegistrations(): Registration[] {
-  return [...store]
+  const id =
+    typeof crypto !== 'undefined' && 'randomUUID' in crypto
+      ? crypto.randomUUID()
+      : `reg_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`
+
+  await insertRegistration(id, {
+    event_id: event.id,
+    event_title: event.title,
+    full_name: payload.fullName.trim(),
+    email: payload.email.trim().toLowerCase(),
+    company_name: payload.companyName?.trim() || null,
+    role: payload.role?.trim() || null,
+    goal: payload.goal?.trim() || null,
+    zoom_meeting_id: meetingId,
+    join_url: joinUrl,
+  })
+
+  return {
+    ...payload,
+    id,
+    createdAt: new Date().toISOString(),
+    zoomMeetingId: meetingId,
+    joinUrl,
+  }
 }

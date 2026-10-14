@@ -62,59 +62,109 @@ export const workshops: WorkshopEvent[] = [
     format: 'workshop',
     title: 'How Trusted Advisors Win More Business',
     startsAt: '2026-10-16T19:00:00Z',
-    durationMinutes: 90,
-    timezoneLabel: 'PT',
-    isFree: false,
-    priceCents: 9900,
+    durationMinutes: 60,
+    timezoneLabel: 'PDT',
+    isFree: true,
     featured: true,
+    upcoming: true,
     framework: 'Establish, Earn, Elevate',
+    focus:
+      'Establish, Earn, Elevate: Become the obvious choice and win business without competing on price.',
     problem:
-      "Prospects are comparing you on price and treating your services like a commodity — so every deal turns into a discount negotiation.",
-    takeaways: [
-      'Reframe the conversation from cost to outcomes so price stops being the deciding factor.',
-      'Apply the Establish, Earn, Elevate framework to your next discovery call.',
-      'Turn one-off projects into recurring advisory relationships.',
-      'Package and price your expertise as a premium, trusted-advisor offer.',
-      'Walk away with a playbook to raise your close rate without cutting rates.',
+      "Expertise alone doesn't make you the obvious choice. Prospects buy on emotion and justify with logic. If you are treated like a commodity vendor who simply completes the job, your acquisition strategy is stuck.",
+    explore: [
+      'How to demonstrate domain expertise so prospects feel you understand their world.',
+      'Why selling experience falls short and what to show instead.',
+      'How to turn sales conversations into an advisory experience that builds confidence.',
+      'How to guide prospects to the right solution without pushing for the sale.',
     ],
+    takeaway:
+      'Walk out with a clear framework (Establish, Earn, Elevate) to apply directly to your brand, sales pitch, and client relationships.',
     summary:
-      'A 90-minute, hands-on workshop where you apply the "Establish, Earn, Elevate" framework directly to your pipeline — and leave with a working plan, not just notes.',
+      'A 60-minute interactive working session where you apply the "Establish, Earn, Elevate" framework directly to your brand, sales pitch, and client relationships.',
   },
   {
-    id: 'ws-2026-08-messaging-mistakes',
+    id: 'ws-2026-09-messaging-mistake',
     format: 'workshop',
-    title: 'The Messaging Mistakes Costing You Clients',
+    title: "The Messaging Mistake That's Costing You Leads",
+    startsAt: '2026-09-11T19:00:00Z',
+    durationMinutes: 60,
+    timezoneLabel: 'PDT',
+    isFree: true,
+    framework: 'Brand vs. Lead Gen Messaging',
+    focus:
+      'Brand vs. Lead Gen Messaging: Learn how to build messaging on engagement to drive sales conversations.',
+    summary:
+      'The common messaging errors that make founders sound like everyone else — and the fixes that make you the obvious choice.',
+  },
+  {
+    id: 'ws-2026-08-discovery-calls',
+    format: 'workshop',
+    title: 'Turn Discovery Calls into Closed Deals',
     startsAt: '2026-08-14T19:00:00Z',
-    durationMinutes: 90,
-    timezoneLabel: 'PT',
-    isFree: false,
-    priceCents: 9900,
-    summary:
-      'A past favorite: the common messaging errors that make founders sound like everyone else — and the fixes that make you the obvious choice.',
-  },
-  {
-    id: 'ws-2026-07-discovery-call',
-    format: 'workshop',
-    title: 'Discovery Call Conversion',
-    startsAt: '2026-07-17T19:00:00Z',
-    durationMinutes: 90,
-    timezoneLabel: 'PT',
-    isFree: false,
-    priceCents: 9900,
+    durationMinutes: 60,
+    timezoneLabel: 'PDT',
+    isFree: true,
+    framework: 'Courtroom Sales Structure',
+    focus: 'Courtroom Sales Structure: Turn discovery calls into a compelling closing argument.',
     summary:
       'Turn first calls into signed engagements with a structured discovery approach that surfaces real pain and positions you as the solution.',
   },
   {
-    id: 'ws-2026-06-niching-paradox',
+    id: 'ws-2026-07-empty-pipeline',
     format: 'workshop',
-    title: 'The Niching Paradox',
+    title: 'Unclear Brand = Empty Pipeline',
+    startsAt: '2026-07-17T19:00:00Z',
+    durationMinutes: 60,
+    timezoneLabel: 'PDT',
+    isFree: true,
+    framework: '1–2 Word Brand Focus',
+    focus:
+      '1–2 Word Brand Focus: Uncover your core brand words to eliminate confusion and attract buyers.',
+    summary:
+      'Uncover your core brand words to eliminate confusion and attract the buyers who are right for you.',
+  },
+  {
+    id: 'ws-2026-06-revolutionize-discovery',
+    format: 'workshop',
+    title: 'Revolutionize Your Discovery Call',
     startsAt: '2026-06-12T19:00:00Z',
-    durationMinutes: 90,
-    timezoneLabel: 'PT',
-    isFree: false,
-    priceCents: 9900,
+    durationMinutes: 60,
+    timezoneLabel: 'PDT',
+    isFree: true,
+    framework: '6-Question Uncovering Pain Sequence',
+    focus:
+      '6-Question Uncovering Pain Sequence: Collaborate with prospects to eliminate price objections early.',
+    summary:
+      'Collaborate with prospects to eliminate price objections early using a 6-question uncovering pain sequence.',
+  },
+  {
+    id: 'ws-2026-05-niching-paradox',
+    format: 'workshop',
+    title: 'The Niching Paradox Workshop',
+    startsAt: '2026-05-15T19:00:00Z',
+    durationMinutes: 60,
+    timezoneLabel: 'PDT',
+    isFree: true,
+    framework: '3-Question Niche Filter',
+    focus:
+      '3-Question Niche Filter: Narrow your audience to increase conversions and pricing power.',
     summary:
       'Why going narrower makes you bigger — how to niche down without capping your growth or boxing yourself in.',
+  },
+  {
+    id: 'ws-2026-05-ai-client-acquisition',
+    format: 'workshop',
+    title: 'How to Prompt AI for Client Acquisition',
+    startsAt: '2026-05-21T19:00:00Z',
+    durationMinutes: 60,
+    timezoneLabel: 'PDT',
+    isFree: true,
+    framework: 'AI Messaging Strategy',
+    focus:
+      'AI Messaging Strategy: Prompt AI to build differentiated brand and lead gen messaging.',
+    summary:
+      'Prompt AI to build differentiated brand and lead gen messaging for your business.',
   },
 ]
 
@@ -136,7 +186,7 @@ export function getFeaturedWorkshop(): WorkshopEvent | undefined {
   return workshops.find((workshop) => workshop.featured)
 }
 
-/** Upcoming paid workshops, featured first, then most recent. */
+/** Workshops, featured/upcoming first, then by date. */
 export function getWorkshops(): WorkshopEvent[] {
   return [...workshops].sort((a, b) => {
     if (a.featured !== b.featured) return a.featured ? -1 : 1

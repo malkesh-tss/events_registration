@@ -1,30 +1,73 @@
 @import "tailwindcss";
 
-@theme {
-  --color-ink: #0b1220;
-  --color-ink-soft: #1e293b;
-  --color-slate-body: #475569;
+/* ------------------------------------------------------------------ */
+/* Raw CSS variables — the design source of truth (see theme.md).      */
+/* ------------------------------------------------------------------ */
+:root {
+  --navy-deep: #1a2332;
+  --navy: #24344d;
+  --navy-muted: #3a4a63;
+  --navy-tint: #5b6b84;
 
-  --color-brand-50: #eef4ff;
-  --color-brand-100: #d9e6ff;
-  --color-brand-500: #2f5fe0;
-  --color-brand-600: #1f4bd0;
-  --color-brand-700: #173aa6;
-  --color-brand-900: #0d1f5c;
+  --gold: #d4af37;
+  --gold-hover: #c0a02e;
+  --gold-muted: #e5c86a;
+  --gold-soft: #f3e8c4;
 
-  --color-accent-400: #fbbf24;
-  --color-accent-500: #f59e0b;
-  --color-accent-600: #d97706;
+  --ivory: #f5f1e8;
+  --ivory-deep: #efe9db;
+  --ink: #1a2332;
+  --body: #4a5568;
+  --border-soft: #e6e0d3;
 
-  --color-surface: #f7f9fc;
-  --color-border-soft: #e5eaf1;
-
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --background: #ffffff;
+  --foreground: var(--navy-deep);
 }
 
-:root {
-  --background: #ffffff;
-  --foreground: var(--color-ink);
+/* ------------------------------------------------------------------ */
+/* Tailwind v4 design tokens — maps raw vars into utility classes      */
+/* like bg-navy-deep, text-gold, bg-ivory, font-display.               */
+/* Also re-points the existing brand/accent/surface tokens so current  */
+/* components adopt the new palette without rewrites.                  */
+/* ------------------------------------------------------------------ */
+@theme inline {
+  /* New named palette tokens */
+  --color-navy-deep: var(--navy-deep);
+  --color-navy: var(--navy);
+  --color-navy-muted: var(--navy-muted);
+  --color-navy-tint: var(--navy-tint);
+  --color-gold: var(--gold);
+  --color-gold-hover: var(--gold-hover);
+  --color-gold-muted: var(--gold-muted);
+  --color-gold-soft: var(--gold-soft);
+  --color-ivory: var(--ivory);
+  --color-ivory-deep: var(--ivory-deep);
+
+  /* Semantic aliases used across components (mapped to the new palette) */
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--navy);
+  --color-slate-body: var(--body);
+  --color-surface: var(--ivory);
+  --color-border-soft: var(--border-soft);
+
+  --color-brand-50: var(--gold-soft);
+  --color-brand-100: #d8d0c0;
+  --color-brand-500: var(--navy-muted);
+  --color-brand-600: var(--navy);
+  --color-brand-700: var(--navy-deep);
+  --color-brand-900: var(--navy-deep);
+
+  --color-accent-400: var(--gold-muted);
+  --color-accent-500: var(--gold);
+  --color-accent-600: var(--gold-hover);
+
+  /* Typography */
+  --font-sans: var(--font-dm-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-playfair), Georgia, "Times New Roman", serif;
+  --font-editorial: var(--font-lora), Georgia, serif;
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
 }
 
 html {
@@ -38,6 +81,26 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* Display font for headings, editorial serif for quotes/letters. */
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  letter-spacing: -0.01em;
+}
+
+blockquote {
+  font-family: var(--font-editorial);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 /* Reusable button styles for conversion-focused CTAs. */
 .btn {
   display: inline-flex;
@@ -47,38 +110,41 @@ body {
   border-radius: 0.65rem;
   font-weight: 600;
   padding: 0.85rem 1.5rem;
-  transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+  transition: transform 0.15s ease, box-shadow 0.15s ease,
+    background-color 0.15s ease, color 0.15s ease;
   cursor: pointer;
   text-align: center;
 }
 
+/* Gold is the primary accent — text stays navy for contrast. */
 .btn-primary {
-  background-color: var(--color-accent-500);
-  color: #1a1206;
-  box-shadow: 0 10px 24px -12px rgba(245, 158, 11, 0.7);
+  background-color: var(--gold);
+  color: var(--navy-deep);
+  box-shadow: 0 10px 24px -12px rgba(212, 175, 55, 0.65);
 }
 
 .btn-primary:hover {
-  background-color: var(--color-accent-600);
+  background-color: var(--gold-hover);
   transform: translateY(-1px);
 }
 
 .btn-secondary {
-  background-color: var(--color-brand-600);
+  background-color: var(--navy);
   color: #ffffff;
 }
 
 .btn-secondary:hover {
-  background-color: var(--color-brand-700);
+  background-color: var(--navy-deep);
   transform: translateY(-1px);
 }
 
 .btn-ghost {
   background-color: transparent;
-  color: var(--color-brand-600);
-  border: 1.5px solid var(--color-brand-100);
+  color: var(--gold-muted);
+  border: 1.5px solid var(--navy-muted);
 }
 
 .btn-ghost:hover {
-  background-color: var(--color-brand-50);
+  background-color: var(--navy-muted);
+  color: #ffffff;
 }

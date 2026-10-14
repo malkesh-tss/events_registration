@@ -7,8 +7,8 @@ export default function FinalCTA({ nextEvent }: { nextEvent?: SummitEvent }) {
     <section className="mx-auto max-w-6xl px-5 pb-20">
       <div className="overflow-hidden rounded-3xl bg-gradient-to-br from-brand-700 to-brand-900 px-8 py-14 text-center text-white shadow-xl">
         <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl">
-          Your Market Doesn't Need Another Vendor. It Needs You — as the Trusted
-          Advisor.
+          Join thousands of founders already building smarter with The Scale
+          Summit.
         </h2>
         <p className="mx-auto mt-4 max-w-2xl text-lg text-brand-100">
           {nextEvent
@@ -17,7 +17,7 @@ export default function FinalCTA({ nextEvent }: { nextEvent?: SummitEvent }) {
         </p>
         <div className="mt-8 flex justify-center">
           <RegisterButton event={nextEvent} variant="primary">
-            Claim Your Spot for Next Event
+            Be Part of It
           </RegisterButton>
         </div>
       </div>

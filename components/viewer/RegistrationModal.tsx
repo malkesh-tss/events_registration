@@ -26,6 +26,7 @@ export default function RegistrationModal({
   const [goal, setGoal] = useState('')
   const [status, setStatus] = useState<Status>('idle')
   const [message, setMessage] = useState('')
+  const [joinUrl, setJoinUrl] = useState<string | null>(null)
   const [errors, setErrors] = useState<Record<string, string>>({})
 
   const activeEvent = useMemo(
@@ -63,6 +64,7 @@ export default function RegistrationModal({
     if (result.ok) {
       setStatus('success')
       setMessage(result.message)
+      setJoinUrl(result.joinUrl ?? null)
     } else {
       setStatus('error')
       setMessage(result.message)
@@ -88,7 +90,17 @@ export default function RegistrationModal({
             </div>
             <h3 className="text-xl font-bold text-ink">You're on the list!</h3>
             <p className="mt-2 text-slate-body">{message}</p>
-            <button className="btn btn-primary mt-6 w-full" onClick={onClose}>
+            {joinUrl && (
+              <a
+                href={joinUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn btn-primary mt-6 w-full"
+              >
+                Join on Zoom
+              </a>
+            )}
+            <button className="btn btn-ghost mt-3 w-full !border-border-soft !text-navy hover:!bg-ivory" onClick={onClose}>
               Done
             </button>
           </div>
