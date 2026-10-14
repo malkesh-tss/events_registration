@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import type { SummitEvent } from '@/lib/types'
-import { submitRegistration } from '@/lib/api/client'
+import { submitRegistration, fetchUpcomingEvents } from '@/lib/api/client'
 import { formatDateTime, formatPrice } from '@/lib/utils/format'
 
 interface RegistrationModalProps {
@@ -18,6 +18,7 @@ export default function RegistrationModal({
   selected,
   onClose,
 }: RegistrationModalProps) {
+  const [fallbackEvents, setFallbackEvents] = useState<SummitEvent[]>([])
   const [eventId, setEventId] = useState(selected?.id ?? events[0]?.id ?? '')
   const [fullName, setFullName] = useState('')
   const [email, setEmail] = useState('')
@@ -29,10 +30,30 @@ export default function RegistrationModal({
   const [joinUrl, setJoinUrl] = useState<string | null>(null)
   const [errors, setErrors] = useState<Record<string, string>>({})
 
-  const activeEvent = useMemo(
-    () => events.find((event) => event.id === eventId) ?? null,
-    [events, eventId],
+  // The provider prefetches upcoming Eventbrite events on page load and passes
+  // them via `events`, so the dropdown is populated instantly on open. This
+  // local fallback is only used if that prefetch hasn't resolved yet (or
+  // failed), so the list still fills in rather than staying empty.
+  const allEvents = useMemo(
+    () => (events.length ? events : fallbackEvents),
+    [events, fallbackEvents],
   )
+
+  const activeEvent = useMemo(
+    () => allEvents.find((event) => event.id === eventId) ?? null,
+    [allEvents, eventId],
+  )
+
+  useEffect(() => {
+    if (events.length) return
+    let cancelled = false
+    fetchUpcomingEvents().then((fetched) => {
+      if (!cancelled && fetched.length) setFallbackEvents(fetched)
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [events.length])
 
   useEffect(() => {
     setEventId(selected?.id ?? events[0]?.id ?? '')
@@ -40,6 +61,16 @@ export default function RegistrationModal({
     setMessage('')
     setErrors({})
   }, [selected, events])
+
+  // Keep the dropdown selection valid: if the current event isn't among the
+  // upcoming events (e.g. a static page card that isn't on Eventbrite, or
+  // before the live list loads), snap to the soonest available event.
+  useEffect(() => {
+    if (!allEvents.length) return
+    if (!allEvents.some((event) => event.id === eventId)) {
+      setEventId(allEvents[0].id)
+    }
+  }, [allEvents, eventId])
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose()
@@ -56,8 +87,8 @@ export default function RegistrationModal({
       eventId,
       fullName,
       email,
-      companyName: companyName || undefined,
-      role: role || undefined,
+      companyName,
+      role,
       goal: goal || undefined,
     })
 
@@ -129,7 +160,7 @@ export default function RegistrationModal({
                 onChange={(e) => setEventId(e.target.value)}
                 className="mt-1 w-full rounded-lg border border-border-soft bg-white px-3 py-2 text-ink outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
               >
-                {events.map((event) => (
+                {allEvents.map((event) => (
                   <option key={event.id} value={event.id}>
                     {event.format === 'roundtable' ? 'Roundtable' : 'Workshop'} —{' '}
                     {event.title}
@@ -166,9 +197,16 @@ export default function RegistrationModal({
                   label="Company"
                   value={companyName}
                   onChange={setCompanyName}
-                  optional
+                  error={errors.companyName}
+                  required
                 />
-                <Field label="Your role" value={role} onChange={setRole} optional />
+                <Field
+                  label="Your role"
+                  value={role}
+                  onChange={setRole}
+                  error={errors.role}
+                  required
+                />
               </div>
 
               <label className="block text-sm font-medium text-ink-soft">
@@ -224,7 +262,9 @@ function Field({
 }: FieldProps) {
   return (
     <label className="block text-sm font-medium text-ink-soft">
-      {label} {optional && <span className="text-slate-body">(optional)</span>}
+      {label}{' '}
+      {required && <span className="text-red-500">*</span>}
+      {optional && <span className="text-slate-body">(optional)</span>}
       <input
         type={type}
         value={value}
