@@ -12,7 +12,7 @@ export default function Footer() {
           className="h-8 w-auto"
         />
         <p>Hosted by Darrin Guttman · Founder &amp; CEO</p>
-        <div className="flex items-center gap-4">
+        {/* <div className="flex items-center gap-4">
           <a
             href="https://facebook.com"
             target="_blank"
@@ -29,7 +29,7 @@ export default function Footer() {
           >
             Linkedin
           </a>
-        </div>
+        </div> */}
         <p>© 2026 The Scale Summit. All rights reserved.</p>
       </div>
     </footer>

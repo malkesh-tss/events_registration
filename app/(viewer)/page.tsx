@@ -7,38 +7,21 @@ import Workshops from '@/components/viewer/Workshops'
 import FinalCTA from '@/components/viewer/FinalCTA'
 import Footer from '@/components/viewer/Footer'
 import RegistrationProvider from '@/components/viewer/RegistrationProvider'
-import {
-  getEvents,
-  getRoundtables,
-  getFeaturedWorkshop,
-  getWorkshops,
-} from '@/lib/api/events'
 
 export default function LandingPage() {
-  const events = getEvents()
-  const roundtables = getRoundtables()
-  const featured = getFeaturedWorkshop()
-  const allWorkshops = getWorkshops()
-
-  // Soonest event by scheduled date drives the "next up" CTA. Kept date-only
-  // (no wall-clock) so the landing page stays fully static/prerenderable.
-  const nextEvent =
-    featured ??
-    [...events].sort(
-      (a, b) =>
-        new Date(a.startsAt).getTime() - new Date(b.startsAt).getTime(),
-    )[0]
-
+  // All events are sourced live from Eventbrite: the schedule tables and the
+  // "Reserve your spot" modal fetch them client-side (cached in Neon). The
+  // landing page itself stays fully static/prerenderable, so no seed catalog.
   return (
-    <RegistrationProvider events={events}>
+    <RegistrationProvider events={[]}>
       <Header />
       <main>
         <Hero />
         {/* <ChoosePath /> */}
-        <Roundtables events={roundtables} />
-        <Workshops workshops={allWorkshops} />
+        <Roundtables events={[]} />
+        <Workshops workshops={[]} />
         {/* <FacilitatorBio /> */}
-        <FinalCTA nextEvent={nextEvent} />
+        <FinalCTA />
       </main>
       <Footer />
     </RegistrationProvider>

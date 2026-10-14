@@ -95,6 +95,15 @@ export async function readActiveEvents(kind: EventKind, limit = 3): Promise<Even
   )
 }
 
+/** Looks up a single cached Eventbrite event by id. */
+export async function readEventById(id: string): Promise<EventRow | null> {
+  const rows = await query<EventRow>(
+    `SELECT * FROM events WHERE id = $1 AND event_status = 'active'`,
+    [id],
+  )
+  return rows[0] ?? null
+}
+
 export async function upsertEvents(rows: Omit<EventRow, 'created_at' | 'updated_at'>[]): Promise<void> {
   if (rows.length === 0) return
   const values = rows.map((r) => ({

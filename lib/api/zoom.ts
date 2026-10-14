@@ -88,6 +88,9 @@ export class ZoomClient {
   async findMeeting(title: string, startAt: Date): Promise<string> {
     let nextPageToken = ''
     const targetTime = startAt.getTime()
+    const normalize = (s?: string) =>
+      (s ?? '').toLowerCase().replace(/[^a-z0-9]/g, '')
+    const wanted = normalize(title)
 
     do {
       const query = new URLSearchParams({ type: 'scheduled', page_size: '300' })
@@ -96,13 +99,27 @@ export class ZoomClient {
         `/users/me/meetings?${query}`,
       )
 
-      const meeting = (data.meetings ?? []).find((candidate) => {
-        if (candidate.topic !== title || !candidate.start_time) return false
-        return (
-          Math.abs(new Date(candidate.start_time).getTime() - targetTime) <=
+      const withinTime = (candidate: ZoomMeeting) =>
+        !!candidate.start_time &&
+        Math.abs(new Date(candidate.start_time).getTime() - targetTime) <=
           90_000
-        )
-      })
+
+      const meetings = data.meetings ?? []
+      // Prefer an exact (normalized) title + time match; fall back to a
+      // normalized substring match so Eventbrite/Zoom title differences still
+      // resolve, then to a time-only match as a last resort.
+      const meeting =
+        meetings.find(
+          (c) => withinTime(c) && normalize(c.topic) === wanted,
+        ) ??
+        meetings.find(
+          (c) =>
+            withinTime(c) &&
+            wanted.length > 0 &&
+            (normalize(c.topic).includes(wanted) ||
+              wanted.includes(normalize(c.topic))),
+        ) ??
+        meetings.find((c) => withinTime(c))
 
       if (meeting) return String(meeting.id)
       nextPageToken = data.next_page_token ?? ''
