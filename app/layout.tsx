@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { DM_Sans, Playfair_Display, Lora } from "next/font/google";
 import "./globals.css";
+import FirebaseAnalytics from "@/components/FirebaseAnalytics";
 
 const dmSans = DM_Sans({
   variable: "--font-dm-sans",
@@ -32,7 +33,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={`${dmSans.variable} ${playfair.variable} ${lora.variable} h-full antialiased`}
     >
-      <body className="min-h-full bg-white text-ink">{children}</body>
+      <body className="min-h-full bg-white text-ink">
+        {children}
+        <FirebaseAnalytics />
+      </body>
     </html>
   );
 }

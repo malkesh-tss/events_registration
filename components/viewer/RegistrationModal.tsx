@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import type { SummitEvent } from '@/lib/types'
 import { submitRegistration, fetchUpcomingEvents } from '@/lib/api/client'
+import { trackGA } from '@/lib/analytics'
 import { formatDateTime, formatPrice } from '@/lib/utils/format'
 
 interface RegistrationModalProps {
@@ -79,6 +80,17 @@ export default function RegistrationModal({
     return () => document.removeEventListener('keydown', onKey)
   }, [onClose, status])
 
+  // The modal only mounts when open, so this fires once per open as a funnel
+  // step between the page visit and the generate_lead conversion.
+  useEffect(() => {
+    trackGA('begin_registration', {
+      event_id: selected?.id ?? eventId,
+      event_title: selected?.title ?? 'unselected',
+      event_format: selected?.format ?? 'event',
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setStatus('submitting')
@@ -96,6 +108,11 @@ export default function RegistrationModal({
       setStatus('success')
       setMessage(result.message)
       setJoinUrl(result.joinUrl ?? null)
+      trackGA('generate_lead', {
+        event_title: activeEvent?.title ?? eventId,
+        event_format: activeEvent?.format ?? 'event',
+        event_id: eventId,
+      })
     } else {
       setStatus('error')
       setMessage(result.message)
