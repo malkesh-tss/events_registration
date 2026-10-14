@@ -1,6 +1,14 @@
-import type { Registration, RegistrationPayload } from '@/lib/types'
-import { getEventById } from '@/lib/api/events'
-import { insertRegistration } from '@/lib/api/db'
+import type {
+  Registration,
+  RegistrationPayload,
+  SummitEvent,
+} from '@/lib/types'
+import {
+  ensureEventsTable,
+  insertRegistration,
+  readEventById,
+} from '@/lib/api/db'
+import type { EventRow } from '@/lib/api/db'
 import { ZoomClient } from '@/lib/api/zoom'
 
 export interface ValidationResult {
@@ -10,14 +18,49 @@ export interface ValidationResult {
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
-export function validateRegistration(payload: unknown): ValidationResult {
+/** Converts a cached Eventbrite row into the SummitEvent shape. */
+export function liveEventToSummit(row: EventRow): SummitEvent {
+  return {
+    id: row.id,
+    format: row.kind ?? 'roundtable',
+    title: row.title,
+    startsAt: row.start_utc ?? '',
+    durationMinutes: 60,
+    timezoneLabel: 'PT',
+    isFree: true,
+    summary: (row.description ?? '').slice(0, 200),
+    focus: (row.description ?? '').slice(0, 200),
+    upcoming: true,
+  }
+}
+
+/**
+ * Resolves an event id against the Neon cache of live Eventbrite events
+ * (the modal and schedules list upcoming Eventbrite events).
+ */
+export async function resolveEvent(id: string): Promise<SummitEvent | null> {
+  await ensureEventsTable()
+  const row = await readEventById(id)
+  return row ? liveEventToSummit(row) : null
+}
+
+export async function validateRegistrationAsync(
+  payload: unknown,
+): Promise<ValidationResult> {
   const errors: Record<string, string> = {}
   const data = (payload ?? {}) as Partial<RegistrationPayload>
 
   if (!data.eventId || typeof data.eventId !== 'string') {
     errors.eventId = 'A valid event is required.'
-  } else if (!getEventById(data.eventId)) {
-    errors.eventId = 'We could not find that event.'
+  } else {
+    try {
+      if (!(await resolveEvent(data.eventId))) {
+        errors.eventId = 'We could not find that event.'
+      }
+    } catch {
+      // DB unreachable — we can't verify the event.
+      errors.eventId = 'We could not find that event.'
+    }
   }
 
   if (!data.fullName || data.fullName.trim().length < 2) {
@@ -26,6 +69,14 @@ export function validateRegistration(payload: unknown): ValidationResult {
 
   if (!data.email || !EMAIL_RE.test(data.email)) {
     errors.email = 'Please enter a valid email address.'
+  }
+
+  if (!data.companyName || data.companyName.trim().length < 1) {
+    errors.companyName = 'Please enter your company name.'
+  }
+
+  if (!data.role || data.role.trim().length < 1) {
+    errors.role = 'Please enter your role.'
   }
 
   return { ok: Object.keys(errors).length === 0, errors }
@@ -50,9 +101,12 @@ function splitName(fullName: string): { firstName: string; lastName: string } {
 export async function createRegistration(
   payload: RegistrationPayload,
 ): Promise<Registration> {
-  const event = getEventById(payload.eventId)
+  const event = await resolveEvent(payload.eventId).catch(() => null)
   if (!event) {
     throw new Error('We could not find that event.')
+  }
+  if (!event.startsAt) {
+    throw new Error('This event has no scheduled date yet — please try again later.')
   }
 
   const { firstName, lastName } = splitName(payload.fullName)

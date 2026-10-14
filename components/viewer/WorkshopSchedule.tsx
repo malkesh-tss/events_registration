@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import type { WorkshopEvent } from '@/lib/types'
+import type { WorkshopEvent, SummitEvent } from '@/lib/types'
 import type { LiveEvent } from '@/lib/api/eventbrite'
 import RegisterButton from '@/components/viewer/RegisterButton'
 import { formatDateTime } from '@/lib/utils/format'
@@ -11,6 +11,7 @@ interface DisplayRow {
   title: string
   when: string
   focus: string
+  startsAt: string | null
   upcoming: boolean
   url: string | null
 }
@@ -21,6 +22,7 @@ function fromLive(events: LiveEvent[]): DisplayRow[] {
     title: e.title,
     when: e.date ?? '',
     focus: e.description,
+    startsAt: e.startsAt,
     upcoming: e.eventStatus === 'active',
     url: e.eventbriteUrl,
   }))
@@ -32,9 +34,27 @@ function fromFallback(events: WorkshopEvent[]): DisplayRow[] {
     title: e.title,
     when: formatDateTime(e.startsAt, e.timezoneLabel),
     focus: e.focus ?? e.summary,
+    startsAt: e.startsAt,
     upcoming: !!e.upcoming,
     url: null,
   }))
+}
+
+// Build a minimal SummitEvent so the "Register Free" button opens the
+// registration modal preselecting this specific workshop (never the
+// Eventbrite page).
+function toSummit(row: DisplayRow): SummitEvent {
+  return {
+    id: row.id,
+    format: 'workshop',
+    title: row.title,
+    startsAt: row.startsAt ?? '',
+    durationMinutes: 60,
+    timezoneLabel: 'PT',
+    isFree: true,
+    summary: row.focus,
+    focus: row.focus,
+  }
 }
 
 export default function WorkshopSchedule({
@@ -100,17 +120,13 @@ export default function WorkshopSchedule({
                 <p className="text-sm text-slate-body">{row.focus}</p>
               </div>
               <div className="md:col-span-2 md:justify-self-end">
-                {row.url ? (
-                  <a
-                    href={row.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="btn btn-primary"
+                {row.upcoming ? (
+                  <RegisterButton
+                    event={toSummit(row)}
+                    variant="secondary"
                   >
                     Register Free
-                  </a>
-                ) : row.upcoming ? (
-                  <RegisterButton variant="primary">Register Free</RegisterButton>
+                  </RegisterButton>
                 ) : (
                   <a
                     href="#workshops"

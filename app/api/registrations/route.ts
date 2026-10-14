@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import {
   createRegistration,
-  validateRegistration,
+  validateRegistrationAsync,
 } from '@/lib/api/registrations'
 import { ZoomError } from '@/lib/api/zoom'
 import type { RegistrationPayload } from '@/lib/types'
@@ -19,7 +19,7 @@ export async function POST(request: Request) {
     )
   }
 
-  const { ok, errors } = validateRegistration(payload)
+  const { ok, errors } = await validateRegistrationAsync(payload)
   if (!ok) {
     return NextResponse.json(
       { message: 'Please fix the errors below.', errors },
