@@ -40,7 +40,7 @@ export default function Roundtables({ events }: { events: RoundtableEvent[] }) {
             ))}
           </ul>
           <div className="mt-7">
-            <RegisterButton variant="secondary">Join Our Free Roundtable</RegisterButton>
+            <RegisterButton variant="primary">Join Our Free Roundtable</RegisterButton>
           </div>
         </div>
 

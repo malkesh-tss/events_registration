@@ -27,11 +27,11 @@ export default function Hero() {
        
 
         <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-          <a href="#workshops" className="btn btn-primary">
-            Browse Upcoming Workshops
+          <a href="#workshops" className="btn btn-ghost">
+            <span className="text-white">Browse Upcoming Workshops</span>
           </a>
-          <RegisterButton variant="ghost" >
-            <span className="text-white">Join a Free Roundtable</span>
+          <RegisterButton variant="primary">
+            Join a Free Roundtable
           </RegisterButton>
         </div>
 

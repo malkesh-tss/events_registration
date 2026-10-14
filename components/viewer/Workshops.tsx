@@ -36,7 +36,7 @@ export default function Workshops({ workshops }: { workshops: WorkshopEvent[] })
           close more deals—without pushing hard.
         </p>
         <div className="mt-7">
-          <RegisterButton event={featured} variant="primary">
+          <RegisterButton event={featured} variant="secondary">
             Register For Free Now
           </RegisterButton>
         </div>
@@ -107,7 +107,7 @@ export default function Workshops({ workshops }: { workshops: WorkshopEvent[] })
                 )}
                 <RegisterButton
                   event={featured}
-                  variant="primary"
+                  variant="secondary"
                   fullWidth
                 >
                   Register for the Free Workshop

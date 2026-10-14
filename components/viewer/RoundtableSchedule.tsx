@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import type { RoundtableEvent } from '@/lib/types'
+import type { RoundtableEvent, SummitEvent } from '@/lib/types'
 import type { LiveEvent } from '@/lib/api/eventbrite'
 import RegisterButton from '@/components/viewer/RegisterButton'
 import { formatDateTime } from '@/lib/utils/format'
@@ -11,6 +11,7 @@ interface DisplayRow {
   title: string
   subtitle: string
   when: string
+  startsAt: string | null
   url: string | null
 }
 
@@ -20,6 +21,7 @@ function fromLive(events: LiveEvent[]): DisplayRow[] {
     title: e.title,
     subtitle: e.description,
     when: e.date ?? '',
+    startsAt: e.startsAt,
     url: e.eventbriteUrl,
   }))
 }
@@ -30,8 +32,26 @@ function fromFallback(events: RoundtableEvent[]): DisplayRow[] {
     title: e.title,
     subtitle: e.focus,
     when: formatDateTime(e.startsAt, e.timezoneLabel),
+    startsAt: e.startsAt,
     url: null,
   }))
+}
+
+// Build a minimal SummitEvent so the "Reserve Free Seat" button opens the
+// registration modal preselecting this specific roundtable (never the
+// Eventbrite page).
+function toSummit(row: DisplayRow): SummitEvent {
+  return {
+    id: row.id,
+    format: 'roundtable',
+    title: row.title,
+    startsAt: row.startsAt ?? '',
+    durationMinutes: 60,
+    timezoneLabel: 'PT',
+    isFree: true,
+    summary: row.subtitle,
+    focus: row.subtitle,
+  }
 }
 
 export default function RoundtableSchedule({
@@ -96,20 +116,12 @@ export default function RoundtableSchedule({
                 )}
               </div>
               <div className="md:col-span-2 md:justify-self-end">
-                {row.url ? (
-                  <a
-                    href={row.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="btn btn-secondary"
-                  >
-                    Reserve Free Seat
-                  </a>
-                ) : (
-                  <RegisterButton variant="secondary">
-                    Reserve Free Seat
-                  </RegisterButton>
-                )}
+                <RegisterButton
+                  event={toSummit(row)}
+                  variant="primary"
+                >
+                  Reserve Free Seat
+                </RegisterButton>
               </div>
             </li>
           ))}
