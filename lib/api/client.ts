@@ -7,13 +7,14 @@ export interface SubmitResult {
   joinUrl?: string | null
 }
 
-/** Fetches live upcoming events from Eventbrite for the registration modal. */
+/** Fetches live upcoming roundtables for registration. */
 export async function fetchUpcomingEvents(): Promise<SummitEvent[]> {
   try {
     const response = await fetch('/api/events/upcoming', { cache: 'no-store' })
     if (!response.ok) return []
     const data = (await response.json()) as { events?: SummitEvent[] }
-    return Array.isArray(data.events) ? data.events : []
+    const events = Array.isArray(data.events) ? data.events : []
+    return events.filter((event) => event.format === 'roundtable')
   } catch {
     return []
   }

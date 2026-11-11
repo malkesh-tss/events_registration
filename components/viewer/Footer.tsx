@@ -27,6 +27,7 @@ export default function Footer() {
             rel="noopener noreferrer"
             className="font-medium text-brand-600 hover:text-brand-700"
           >
+            
             Linkedin
           </a>
         </div> */}

@@ -1,10 +1,7 @@
 import Image from 'next/image'
 import RegisterButton from '@/components/viewer/RegisterButton'
 
-const navLinks = [
-  { href: '#roundtables', label: 'Roundtables' },
-  { href: '#workshops', label: 'Workshops' },
-]
+const navLinks: Array<{ href: string; label: string }> = []
 
 export default function Header() {
   return (
@@ -20,17 +17,19 @@ export default function Header() {
             className="h-9 w-auto sm:h-10"
           />
         </a>
-        <nav className="hidden items-center gap-6 md:flex">
-          {navLinks.map((link) => (
-            <a
-              key={link.href}
-              href={link.href}
-              className="text-sm font-medium text-ink-soft transition hover:text-brand-600"
-            >
-              {link.label}
-            </a>
-          ))}
-        </nav>
+        {navLinks.length > 0 && (
+          <nav className="hidden items-center gap-6 md:flex">
+            {navLinks.map((link) => (
+              <a
+                key={link.href}
+                href={link.href}
+                className="text-sm font-medium text-ink-soft transition hover:text-brand-600"
+              >
+                {link.label}
+              </a>
+            ))}
+          </nav>
+        )}
         <RegisterButton variant="secondary" fullWidth={false}>
           Join Free
         </RegisterButton>

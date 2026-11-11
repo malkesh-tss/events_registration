@@ -2,7 +2,6 @@ import Header from '@/components/viewer/Header'
 import Hero from '@/components/viewer/Hero'
 // import ChoosePath from '@/components/viewer/ChoosePath'
 import Roundtables from '@/components/viewer/Roundtables'
-import Workshops from '@/components/viewer/Workshops'
 // import FacilitatorBio from '@/components/viewer/FacilitatorBio'
 import FinalCTA from '@/components/viewer/FinalCTA'
 import Footer from '@/components/viewer/Footer'
@@ -19,7 +18,6 @@ export default function LandingPage() {
         <Hero />
         {/* <ChoosePath /> */}
         <Roundtables events={[]} />
-        <Workshops workshops={[]} />
         {/* <FacilitatorBio /> */}
         <FinalCTA />
       </main>

@@ -22,9 +22,9 @@ const lora = Lora({
 });
 
 export const metadata: Metadata = {
-  title: "The Scale Summit — Roundtables & Interactive Workshops for Founders",
+  title: "The Scale Summit — Free Roundtables for Founders",
   description:
-    "Practical, zero-fluff frameworks to help bootstrapped founders escape commodity pricing, fix messaging, and scale client acquisition. Join free weekly Roundtables and deep-dive Interactive Workshops hosted by Darrin Guttman.",
+    "Practical, zero-fluff frameworks to help bootstrapped founders escape commodity pricing, fix messaging, and scale client acquisition. Join free weekly Roundtables hosted by Darrin Guttman.",
 }
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

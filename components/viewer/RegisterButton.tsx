@@ -1,7 +1,7 @@
 'use client'
 
+import { useRouter } from 'next/navigation'
 import type { SummitEvent } from '@/lib/types'
-import { useRegistration } from '@/components/viewer/registration-context'
 
 type Variant = 'primary' | 'secondary' | 'ghost'
 
@@ -22,12 +22,15 @@ export default function RegisterButton({
   children: React.ReactNode
   fullWidth?: boolean
 }) {
-  const { open } = useRegistration()
+  const router = useRouter()
 
   return (
     <button
       type="button"
-      onClick={() => open(event)}
+      onClick={() => {
+        const url = event ? `/form?eventId=${encodeURIComponent(event.id)}` : '/form'
+        router.push(url)
+      }}
       className={`btn ${variantClass[variant]} ${fullWidth ? 'w-full' : ''}`}
     >
       {children}
